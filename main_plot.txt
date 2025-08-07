@@ -1,0 +1,52 @@
+
+## main_plot.R (メインスクリプト)
+#----------------------------------------
+# ★★★ 地域指定 ★★★
+area_name <- "mikkabi"  
+# mikkabi, hosoe, inasa などに変えるだけ
+#----------------------------------------
+
+# ❶ 共通処理読み込み
+source("C:/Users/pirat/Documents/mikkabi_population_analysis/lib/plot_population_by_area_common.R")
+
+# ❷ カスタムスケール上書き（関数 apply_custom_scales を利用）
+custom_overrides <- list(
+  "三ヶ日地区"    = list(total   = list(breaks=seq(0,16000,length=9), limits=c(0,16000))),
+  "三ヶ日町宇志"  = list(age0004 = list(breaks=seq(0,400, length=9), limits=c(0,400))),
+  "三ヶ日町鵺代"    = list(total   = list(breaks=seq(0,800, length=9), limits=c(0,800))),
+  "三ヶ日町下尾奈"  = list(total   = list(breaks=seq(0,1100,length=12),limits=c(0,1100)))
+)
+apply_custom_scales(custom_overrides)
+all_plots <- setNames(lapply(NAMES_area, plot_for_area), NAMES_area)
+NAMES_area
+#----------------------------------------
+area1 <- "三ヶ日地区"　# 全体
+#----------------------------------------
+#「0〜4歳」グラフを表示
+print(all_plots[[area1]]$p1)
+#「0〜14歳」グラフを表示
+print(all_plots[[area1]]$p2)
+#「15〜64歳」グラフを表示
+print(all_plots[[area1]]$p3)
+#「65歳以上」グラフを表示
+print(all_plots[[area1]]$p4)
+#「総人口」グラフを表示
+print(all_plots[[area1]]$p5)
+#「高齢化率の推移」グラフを表示
+print(all_plots[[area1]]$p6)
+
+#----------------------------------------
+area2 <- "三ヶ日町鵺代"　# 全体
+#----------------------------------------
+#「0〜4歳」グラフを表示
+print(all_plots[[area2]]$p1)
+#「0〜14歳」グラフを表示
+print(all_plots[[area2]]$p2)
+#「15〜64歳」グラフを表示
+print(all_plots[[area2]]$p3)
+#「65歳以上」グラフを表示
+print(all_plots[[area2]]$p4)
+#「総人口」グラフを表示
+print(all_plots[[area2]]$p5)
+#「高齢化率の推移」グラフを表示
+print(all_plots[[area2]]$p6)

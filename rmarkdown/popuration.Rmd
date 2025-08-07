@@ -1,0 +1,145 @@
+---
+title: "Mikkabi Population CSV Export & Graphs"
+output:
+  pdf_document:
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+library(readxl)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(stringr)
+library(readr)
+write_csv_safe <- function(df, path) {
+  dir.create(dirname(path), showWarnings = FALSE, recursive = TRUE)
+  readr::write_csv(df, path)
+}
+```
+
+```{r extract_and_export_csv}
+file_path <- "C:/Users/pirat/Documents/mikkabi_population_analysis/data/processed/mikkabi_population_combined.xlsx"
+output_csv <- "C:/Users/pirat/Documents/mikkabi_population_analysis/data/processed/mikkabi_population_tidy.csv"
+
+roman_titles <- c("Mikkabi (Overall)","Ushi","Osaki","Ooya","Okamoto",
+                  "Kamiona","Komaba","Sakume","Shimoona","Tadaki",
+                  "Tsuzuki","Tsutsusaki","Tsuri","Nueshiro","Hibisawa",
+                  "Hirayama","Fukunaga","Honzaka","Makaya","Mikkabi")
+
+all_sheets <- excel_sheets(file_path)
+sheets_april <- all_sheets[str_detect(all_sheets, "-04$")]
+
+tidy_data <- data.frame()
+
+for (sheet in sheets_april) {
+  dat <- read_excel(file_path, sheet = sheet, col_names = FALSE)
+  year_val <- as.character(str_sub(sheet, 1, 4))
+
+  all_age0_4     <- as.numeric(unlist(dat[3 + 45*(0:19), 2]))
+  all_age5_9     <- as.numeric(unlist(dat[9 + 45*(0:19), 2]))
+  all_age10_14   <- as.numeric(unlist(dat[15 + 45*(0:19), 2]))
+  all_age15_19   <- as.numeric(unlist(dat[21 + 45*(0:19), 2]))
+  all_age20_24   <- as.numeric(unlist(dat[27 + 45*(0:19), 2]))
+  all_age25_29   <- as.numeric(unlist(dat[33 + 45*(0:19), 2]))
+  all_age30_34   <- as.numeric(unlist(dat[39 + 45*(0:19), 2]))
+  all_age35_49   <- as.numeric(unlist(dat[3 + 45*(0:19), 6]))
+  all_age50_54   <- as.numeric(unlist(dat[9 + 45*(0:19), 6]))
+  all_age55_59   <- as.numeric(unlist(dat[15 + 45*(0:19), 6]))
+  all_age60_64   <- as.numeric(unlist(dat[21 + 45*(0:19), 6]))
+  all_age65_69   <- as.numeric(unlist(dat[27 + 45*(0:19), 6]))
+  all_age70_74   <- as.numeric(unlist(dat[33 + 45*(0:19), 6]))
+  all_age75_79   <- as.numeric(unlist(dat[39 + 45*(0:19), 6]))
+  all_age80_84   <- as.numeric(unlist(dat[3 + 45*(0:19), 10]))
+  all_age85_89   <- as.numeric(unlist(dat[9 + 45*(0:19), 10]))
+  all_age90_94   <- as.numeric(unlist(dat[15 + 45*(0:19), 10]))
+  all_age95_plus <- as.numeric(unlist(dat[21 + 45*(0:19), 10]))
+  all_total      <- as.numeric(unlist(dat[44 + 45*(0:19), 10]))
+
+  for (i in 1:20) {
+    df <- data.frame(
+      Year = year_val,
+      Region = roman_titles[i],
+      Age_0_4 = all_age0_4[i],
+      Age_5_9 = all_age5_9[i],
+      Age_10_14 = all_age10_14[i],
+      Age_15_19 = all_age15_19[i],
+      Age_20_24 = all_age20_24[i],
+      Age_25_29 = all_age25_29[i],
+      Age_30_34 = all_age30_34[i],
+      Age_35_49 = all_age35_49[i],
+      Age_50_54 = all_age50_54[i],
+      Age_55_59 = all_age55_59[i],
+      Age_60_64 = all_age60_64[i],
+      Age_65_69 = all_age65_69[i],
+      Age_70_74 = all_age70_74[i],
+      Age_75_79 = all_age75_79[i],
+      Age_80_84 = all_age80_84[i],
+      Age_85_89 = all_age85_89[i],
+      Age_90_94 = all_age90_94[i],
+      Age_95_plus = all_age95_plus[i],
+      Total = all_total[i],
+      stringsAsFactors = FALSE
+    )
+    tidy_data <- rbind(tidy_data, df)
+  }
+}
+
+write_csv_safe(tidy_data, output_csv)
+```
+
+```{r render-graphs, message=FALSE, warning=FALSE}
+data <- read_csv(output_csv)
+data$Year <- factor(data$Year, levels = sort(unique(data$Year)))
+
+outdir <- "C:/Users/pirat/Documents/mikkabi_population_analysis/figures/population/mikkabi"
+dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
+
+age3_colors <- c("Age_0_14" = "#4DAFD8", "Age_15_64" = "#13A576", "Age_65_plus" = "#0A68AF")
+age1_colors <- c("Age_0_14" = "#4DAFD8", "Age_15_64" = "#13A576", "Age_65_plus" = "#0A68AF",
+                 "Age_0_4" = "#895393", "Age_75_plus" = "#AF1E25")
+
+data <- data %>%
+  mutate(
+    Age_0_14 = Age_0_4 + Age_5_9 + Age_10_14,
+    Age_15_64 = Age_15_19 + Age_20_24 + Age_25_29 + Age_30_34 + Age_35_49 + Age_50_54 + Age_55_59 + Age_60_64,
+    Age_65_plus = Age_65_69 + Age_70_74 + Age_75_79 + Age_80_84 + Age_85_89 + Age_90_94 + Age_95_plus,
+    Age_75_plus = Age_75_79 + Age_80_84 + Age_85_89 + Age_90_94 + Age_95_plus
+  )
+
+regions <- unique(data$Region)
+
+for (region in regions) {
+  df <- data %>% filter(Region == region)
+
+  pdf(file.path(outdir, paste0(region, ".pdf")), width = 12, height = 9)
+
+  df_long <- df %>%
+    select(Year, Age_0_14, Age_15_64, Age_65_plus) %>%
+    pivot_longer(-Year, names_to = "Group", values_to = "Population")
+  df_long$Group <- factor(df_long$Group, levels = c("Age_65_plus", "Age_15_64", "Age_0_14"))
+
+  print(ggplot(df_long, aes(x = Year, y = Population, fill = Group)) +
+          geom_bar(stat = "identity") +
+          scale_fill_manual(values = age3_colors) +
+          labs(title = paste0(region, " - Age Group Composition"), x = "Year", y = "Population") +
+          theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 20, colour = 1),
+                axis.text.y = element_text(size = 15, colour = 1),
+                plot.title = element_text(size = 30, hjust = 0.5, colour = 1),
+                axis.title = element_text(size = 25, colour = 1)))
+
+  vars <- c("Age_0_14", "Age_15_64", "Age_65_plus", "Age_0_4", "Age_75_plus")
+
+  for (v in vars) {
+    print(ggplot(df, aes_string(x = "Year", y = v)) +
+            geom_bar(stat = "identity", fill = age1_colors[v]) +
+            labs(title = paste0(region, " - ", v, " Population"), x = "Year", y = "Population") +
+            theme(axis.text.x = element_text(angle = 50, hjust = 1, size = 20, colour = 1),
+                  axis.text.y = element_text(size = 15, colour = 1),
+                  plot.title = element_text(size = 30, hjust = 0.5, colour = 1),
+                  axis.title = element_text(size = 25, colour = 1)))
+  }
+
+  dev.off()
+}
+```

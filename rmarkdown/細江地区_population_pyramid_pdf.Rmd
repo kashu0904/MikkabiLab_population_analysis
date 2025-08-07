@@ -1,0 +1,74 @@
+---
+title: "細江町 人口ピラミッドレポート（出力仕様準拠）"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(readxl)
+library(pyramid)
+knitr::opts_chunk$set(echo = TRUE, fig.width = 10, fig.height = 6, dpi = 300)
+
+file_path <- "C:/Users/pirat/Documents/mikkabi_population_analysis/data/processed/hosoe_population_combined.xlsx"
+output_dir <- "C:/Users/pirat/Documents/mikkabi_population_analysis/figures/pyramid/細江地区"
+dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+
+age_groups <- c("0~4","5~9","10~14","15~19","20~24","25~29","30~34","35~39","40~44","45~49",
+                "50~54","55~59","60~64","65~69","70~74","75~79","80~84","85~89","90~94","95~")
+
+roman_titles <- c("Hosoe (Overall)", "Ono", "Kiga", "Nakagawa", "Hirooka", "Miwa")
+
+date_strings <- sort(grep("^\\d{4}-(04|10)$", excel_sheets(file_path), value = TRUE))
+```
+
+```{r export-pdf-with-percentage-scale}
+for (current_date in date_strings) {
+  sheet <- read_excel(file_path, sheet = current_date)
+  male_data <- list()
+  female_data <- list()
+
+  for (i in seq_along(roman_titles)) {
+    start <- 2 + 45 * (i - 1)
+    divisor <- as.numeric(sheet[start + 41, 10])
+
+    if (is.na(divisor) || divisor == 0) {
+      message("⚠️ 人口合計が無効 → ", roman_titles[i])
+      male_data[[i]] <- female_data[[i]] <- rep(NA, length(age_groups))
+      next
+    }
+
+    male_raw <- as.numeric(unlist(sheet[start + 6 * (0:6), c(3, 7, 11)]))
+    female_raw <- as.numeric(unlist(sheet[start + 6 * (0:6), c(4, 8, 12)]))
+
+    if (length(male_raw) < 20 || length(female_raw) < 20) {
+      message("⚠️ 年齢区分が不足 → ", roman_titles[i])
+      male_data[[i]] <- female_data[[i]] <- rep(NA, length(age_groups))
+      next
+    }
+
+    male_data[[i]] <- male_raw[1:20] / divisor * 100
+    female_data[[i]] <- female_raw[1:20] / divisor * 100
+  }
+
+  pdf_path <- file.path(output_dir, paste0("hosoe_pyramids_", current_date, ".pdf"))
+  grDevices::pdf(pdf_path, width = 5, height = 5.2)
+  par(cex.main = 1.5, cex.lab = 0.5, cex.axis = 0.5, cex = 0.5)
+
+  for (i in 0:5) {
+    pyramids(
+      Left = male_data[[i + 1]],
+      Right = female_data[[i + 1]],
+      Lcol = c(rep("#00A0CD", 3), rep("#71C7D5", 10), rep("#00A0CD", 10)),
+      Rcol = c(rep("#EE86A7", 3), rep("#F6BBC6", 10), rep("#EE86A7", 10)),
+      Center = age_groups,
+      Laxis = seq(0, 5, length.out = 6),
+      Clab = "Age (years)",
+      Llab = "Male",
+      Rlab = "Female",
+      Cstep = 1,
+      main = paste0(roman_titles[i + 1], "（", current_date, "）"),
+      lwd = 10
+    )
+  }
+  dev.off()
+}
+```
