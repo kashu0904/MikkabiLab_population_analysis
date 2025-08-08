@@ -13,7 +13,7 @@ library(stringr)
 #----------------------------------------
 
 file_name <- paste0(area_name, "_population_combined.xlsx")
-base_dir   <- "C:/Users/pirat/Documents/mikkabi_population_analysis/data/processed"
+base_dir   <- here::here("data","processed")
 file_path <- file.path(base_dir, file_name)
 # ① シート名を取得し、「YYYY-04」のものだけを年だけに変換
 years <- excel_sheets(file_path) %>%

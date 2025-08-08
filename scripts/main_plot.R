@@ -1,4 +1,7 @@
 library(ggplot2)
+library(here)
+
+
 ## main_plot.R (メインスクリプト)
 #----------------------------------------
 # ★★★ 地域指定 ★★★
@@ -15,7 +18,7 @@ expand_x_std_latest  <- expansion(mult = c(0.04, 0.04))
 expand_y_std_latest  <- expansion(mult = c(0.04, 0.04)) 
 # Y軸（人数や率）方向の余白の割合。上下にどれだけスペースをあけるかを調整。
 # ❶ 共通処理読み込み
-source("C:/Users/pirat/Documents/mikkabi_population_analysis/lib/plot_population_by_area_common.R")
+source(here::here("lib", "plot_population_by_area_common.R"))
 
 custom_scales <- setNames(
   vector("list", length(NAMES_area)),
