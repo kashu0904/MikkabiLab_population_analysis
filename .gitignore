@@ -8,7 +8,8 @@
 
 # R package build artifacts
 *-Ex.R
-.Rcheck/
+/*.tar.gz
+/*.Rcheck/
 .Rbuildignore
 
 # RStudio Connect
@@ -20,10 +21,24 @@ cache/
 *.utf8.md
 *.knit.md
 
+# Vignettes output
+vignettes/*.html
+vignettes/*.pdf
+
+# OAuth2 token
+.httr-oauth
+
 # OS cruft
 .DS_Store
 Thumbs.db
 
-# Secrets (uncomment if you use them)
+# Environment files (uncomment if needed)
 # .Renviron
 # .Rprofile
+
+# Translation temp files
+po/*~
+
+# Temporary files
+*.tmp
+*.bak
