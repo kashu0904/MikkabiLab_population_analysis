@@ -8,6 +8,51 @@ library(tidyr)
 library(scales)
 library(openxlsx)
 library(stringr)
+# ======================================================================
+# プロット共通モジュール  設定・操作ガイド（最上部に集約）
+#   対象: plot_population_by_area_common.R
+#   目的: グラフのデザインとスケールをここだけで統一管理／操作
+#   注意: 機能は変えず、既存処理の可読性と操作性のみ改善
+# ----------------------------------------------------------------------
+# 【使い方】
+#  1) このブロック内の値だけを必要に応じて調整してください。
+#  2) main_plot.R から `area_name` を指定 → 本ファイルを source() → plot_for_area() 実行。
+#  3) 目盛や上限などをエリア別に固定したい場合は、main_plot.R 側の custom_scales に
+#     例の形式で書きます（下の HOWTO を参照）。
+#  4) 値をいじっても描画機能は変わりません。デザイン／スケールの既定値を安全に調整するだけです。
+# ----------------------------------------------------------------------
+# 【デザイン（共通）】
+width_std       <- 0.70   # バーの太さ（全グラフ共通; 推奨: 0.6〜0.8）
+linewidth_std   <- 0.35   # バー枠線の太さ（推奨: 0.3〜0.5）
+expand_x_std    <- expansion(mult = c(0.04, 0.04))  # X軸左右の余白
+expand_y_std    <- expansion(mult = c(0.04, 0.04))  # Y軸上下の余白
+
+# テーマ（背景・罫線などの見た目）
+theme_std <- theme(
+  panel.background = element_rect(fill = "#CCCCCC"),
+  panel.grid.major = element_line(size = 0.35, colour = "white"),
+  panel.grid.minor = element_blank(),
+  axis.text.x      = element_text(size = 9),
+  axis.text.y      = element_text(size = 9),
+  axis.title.x     = element_text(size = 11),
+  axis.title.y     = element_text(size = 11),
+  plot.title       = element_text(size = 13, face = "bold", hjust = 0)
+)
+
+# 【最新年の比較図 専用パラメータ】
+#  - 「各町字の高齢化率 <end_year>（<base_area>）」の図にのみ適用
+width_std_latest        <- 0.50                  # バー太さ（最新年比較）
+latest_area_label_size  <- 5                     # X軸ラベル文字サイズ
+latest_arate_breaks     <- seq(0, 60, by = 5)    # 目盛（%）
+latest_arate_limits     <- c(0, 61.5)            # 表示範囲（%）
+expand_x_std_latest     <- expansion(mult = c(0.04, 0.04))  # X余白
+expand_y_std_latest     <- expansion(mult = c(0.04, 0.04))  # Y余白
+
+# ======================================================================
+
+# custom_scales が未定義でもコケないようにガード（機能は変わりません）
+if (!exists("custom_scales")) custom_scales <- list()
+
 #----------------------------------------
 # 2. 定数・パラメータ設定
 #----------------------------------------
@@ -127,31 +172,24 @@ mat_ageing <- mat_6500 / mat_TOT * 100
 #----------------------------------------
 # 最新の高齢化率
 #----------------------------------------
-# ❶グラフデザイン
-width_std     <- 0.70 #バーの太さ
-linewidth_std <- 0.35 #バーの枠線の太さ
-expand_x_std  <- expansion(mult = c(0.04, 0.04)) 
-# X軸（年）方向の余白の割合。左右にどれだけスペースをあけるかを調整。
-expand_y_std  <- expansion(mult = c(0.04, 0.04)) 
-# Y軸（人数や率）方向の余白の割合。上下にどれだけスペースをあけるかを調整。
-theme_std     <- theme(
+theme_std <- theme(
   panel.background = element_rect(fill = "#CCCCCC"),
-  plot.title       = element_text(size=20, hjust=0.5), #グラフタイトルの大きさ
+  plot.title       = element_text(size = 20, hjust = 0.5),  # グラフタイトル
   axis.title       = element_blank(),
-  axis.text.x      = element_text(angle=50, # X軸ラベル（年など）の角度。50度傾けている。0で横書き。
-                                  hjust=1, # 水平方向のラベル位置の調整。1で右寄せ、0で左寄せ、0.5で中央。
-                                  size= 20 , # X軸ラベルの文字サイズ。
-                                  margin=margin(t=0.1,unit="cm"),
-                                  color = "#000000"), # X軸ラベルと軸との間の余白（上方向）。
-  axis.text.y      = element_text(size=15,
-                                  margin=margin(r=0.2,unit="cm"), # Y軸ラベルと軸との間の余白（右方向）。
-                                  color = "#000000"),
-  plot.margin = margin(t = 2,  # 上余白 1cm
-                       r = 2,  # 右余白 2cm
-                       b = 2,  # 下余白 1cm
-                       l = 2,  # 左余白 2cm
-                       unit = "cm"))
-
+  axis.text.x      = element_text(
+    angle  = 50,      # X軸ラベル角度
+    hjust  = 1,       # 位置（1=右寄せ）
+    size   = 20,      # 文字サイズ
+    margin = margin(t = 0.1, unit = "cm"),
+    color  = "#000000"
+  ),
+  axis.text.y      = element_text(
+    size   = 15,
+    margin = margin(r = 0.2, unit = "cm"),
+    color  = "#000000"
+  ),
+  plot.margin      = margin(t = 2, r = 2, b = 2, l = 2, unit = "cm")
+)
 #----------------------------------------
 # auto scale 用ヘルパー
 #----------------------------------------
@@ -166,7 +204,6 @@ auto_scale <- function(x, n = 5, pad_brk = 1.05, pad_lim = 1.05) {
   brks    <- pretty(c(0, brk_max), n = n)
   lim_max <- mx * pad_lim
   list(breaks = brks,limits = c(0, lim_max))}
-
 
 #----------------------------------------
 # 6. プロット関数定義（サンプルのテーマを共通化）
@@ -187,7 +224,7 @@ plot_for_area <- function(area_name){
   ##----------------------------------------
   ## 共通設定
   ##----------------------------------------
-
+  
   # ❷数値指標用 auto_scale
   auto_scales <- list(
     age0004 = auto_scale(df$age0004, n = 9), # 0~4歳
@@ -259,7 +296,7 @@ plot_for_area <- function(area_name){
     scale_x_discrete(expand = expand_x_std)+
     scale_y_continuous(breaks = y_scales$Arate$breaks, limits = y_scales$Arate$limits,expand = expand_y_std) +
     theme_std
-
+  
   
   list(p1 = p1, p2 = p2, p3 = p3, p4 = p4, p5 = p5, p6 = p6)}
 
@@ -307,5 +344,4 @@ p7 <- ggplot(df, aes(x = area, y = Arate, fill = fill_color)) +
   ) +
   theme_std +
   theme(axis.text.x = element_text(size = latest_area_label_size))
-
 
