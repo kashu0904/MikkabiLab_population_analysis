@@ -67,10 +67,32 @@ custom_scales <- list(
     age65up = list(breaks = seq(0, 900, by = 100), limits = c(0, 900))
   )
 )
+
+#----------------------------------------
+# Arate（％）専用 auto scale
+#----------------------------------------
+# auto_scale: データ最大値にパディングをかけ、いい感じの目盛＆上限を返す
+# x   : 数値ベクトル（例 df$age0004）
+# n   : 目盛の本数目安（大きいほど細かい）
+#   pad_brk  - 目盛生成用にかける倍率（例1.05 → データ最大の105%でpretty）
+#   pad_lim  - limits用にかける倍率（例0.95 → データ最大の95%を上限に）
+auto_rate_scale <- function(x, step = 5, pad = 1.10, min_limit = 0, max_limit = 50) {
+  # step: ％刻み幅
+  # pad : 自動スケーリング時の倍率
+  # min_limit: Y軸の下限（デフォルト0）
+  # max_limit: 手動で指定したい上限（NULLなら自動）
+  mx <- max(x, na.rm = TRUE)
+  # 自動上限候補（手動指定がない場合）
+  top_auto <- ceiling(mx / step) * step * pad
+  top <- if (!is.null(max_limit)) max_limit else top_auto
+  brks <- seq(min_limit, top, by = step)
+  list(breaks = brks, limits = c(min_limit, top))
+}
+
 # ----------------------------------------------------------------------
 # 実行
 # ----------------------------------------------------------------------
-plots <- plot_for_area("引佐町渋川")
+plots <- plot_for_area("引 佐 地 区")
 
 # 必要な図だけ print() してください
 # p1: 0〜4歳 / p2: 0〜14歳 / p3: 15〜64歳 / p4: 65歳以上 / p5: 総人口 / p6: 高齢化率推移

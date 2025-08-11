@@ -136,25 +136,137 @@ sdata <- lapply(sheets, function(sh) {
 # 以下、ext() を使ってデータ抽出へ進みます
 ext <- function(dat, rows, col) {
   as.numeric(dat[rows, col][[1]])}
-p0004  <- unlist(lapply(sdata, ext, rows = 2  + 45 * index_vec, col = 2))
-p0014  <- unlist(lapply(sdata, ext, rows = 44 + 45 * index_vec, col = 2))
-p1564  <- unlist(lapply(sdata, ext, rows = 44 + 45 * index_vec, col = 6))
-p6500  <- unlist(lapply(sdata, ext, rows = 44 + 45 * index_vec, col = 10))
-pTotal <- unlist(lapply(sdata, ext, rows = 43 + 45 * index_vec, col = 10))
+
+p0004  <- unlist(lapply(sdata, ext, rows=  2  + 45 * index_vec, col = 2 )) #0~4歳人口
+p0509  <- unlist(lapply(sdata, ext, rows=  8  + 45 * index_vec, col = 2 )) #05~09歳人口
+p1014  <- unlist(lapply(sdata, ext, rows=  14 + 45 * index_vec, col = 2 )) #10~14歳人口
+p1519  <- unlist(lapply(sdata, ext, rows=  20 + 45 * index_vec, col = 2 )) #15~19歳人口
+p2024  <- unlist(lapply(sdata, ext, rows=  26 + 45 * index_vec, col = 2 )) #20~24歳人口
+p2529  <- unlist(lapply(sdata, ext, rows=  32 + 45 * index_vec, col = 2 )) #25~29歳人口
+p3034  <- unlist(lapply(sdata, ext, rows=  38 + 45 * index_vec, col = 2 )) #30~34歳人口
+p3539  <- unlist(lapply(sdata, ext, rows=  2  + 45 * index_vec, col = 6 )) #35~39歳人口
+p4044  <- unlist(lapply(sdata, ext, rows=  8  + 45 * index_vec, col = 6 )) #40~44歳人口
+p4549  <- unlist(lapply(sdata, ext, rows=  14 + 45 * index_vec, col = 6 )) #45~49歳人口
+p5054  <- unlist(lapply(sdata, ext, rows=  20 + 45 * index_vec, col = 6 )) #50~54歳人口
+p5559  <- unlist(lapply(sdata, ext, rows=  26 + 45 * index_vec, col = 6 )) #55~59歳人口
+p6064  <- unlist(lapply(sdata, ext, rows=  32 + 45 * index_vec, col = 6 )) #60~64歳人口
+p6569  <- unlist(lapply(sdata, ext, rows=  38 + 45 * index_vec, col = 6 )) #65~69歳人口
+p7074  <- unlist(lapply(sdata, ext, rows=  2  + 45 * index_vec, col = 10 )) #70~74歳人口
+p7579  <- unlist(lapply(sdata, ext, rows=  8  + 45 * index_vec, col = 10 )) #75~79歳人口
+p8084  <- unlist(lapply(sdata, ext, rows=  14 + 45 * index_vec, col = 10 )) #80~84歳人口
+p8589  <- unlist(lapply(sdata, ext, rows=  20 + 45 * index_vec, col = 10 )) #85~89歳人口
+p9094  <- unlist(lapply(sdata, ext, rows=  26 + 45 * index_vec, col = 10 )) #90~94歳人口
+p9500  <- unlist(lapply(sdata, ext, rows=  32 + 45 * index_vec, col = 10 )) #95~歳人口
+
+p0014  <- unlist(lapply(sdata, ext, rows = 44 + 45 * index_vec, col = 2 )) #0~14歳人口
+p1564  <- unlist(lapply(sdata, ext, rows = 44 + 45 * index_vec, col = 6 )) #15~64歳人口
+p6500  <- unlist(lapply(sdata, ext, rows = 44 + 45 * index_vec, col = 10)) #65~歳人口
+
+p6574  <- p6569+p7074 #65~74歳人口(前期高齢者)
+p7500  <- p6500-p6574 #75~  歳人口(後期高齢者)
+
+pTotal <- unlist(lapply(sdata, ext, rows = 43 + 45 * index_vec, col = 10)) #総人口
+
+pTotal_calc <- p0014 + p1564 + p6500 + p6500 - p6569 -p7074 - p7500
+
+# 不一致チェック（許容誤差つき）＆ユーザー選択で続行
+# ─────────────────────────────────────────────
+# 5歳階級→集計の突き合わせ（全年齢検証フルセット）
+# 前提：p0004..p9500, p0014, p1564, p6500, p6574, p7500, pTotal が既に作成済み
+# years, NAMES_area, n_areas も定義済み
+# ─────────────────────────────────────────────
+tol <- 1e-8
+
+# ① 5歳階級の合算から再計算（期待する集計値）
+p0014_calc <- p0004 + p0509 + p1014
+p1564_calc <- p1519 + p2024 + p2529 + p3034 + p3539 + p4044 + p4549 + p5054 + p5559 + p6064
+p6500_calc <- p6569 + p7074 + p7579 + p8084 + p8589 + p9094 + p9500
+
+# ② 65–74 / 75+ の内訳チェック（下位=上位の再現）
+p6574_calc <- p6569 + p7074
+p7500_calc <- p7579 + p8084 + p8589 + p9094 + p9500
+
+# ③ 全年齢合算＝総人口
+pTotal_from_bins <- p0004 + p0509 + p1014 + p1519 + p2024 + p2529 + p3034 +
+  p3539 + p4044 + p4549 + p5054 + p5559 + p6064 + p6569 +
+  p7074 + p7579 + p8084 + p8589 + p9094 + p9500
+
+# ④ 便宜：比較ユーティリティ（ベクトル×ユーザー続行）
+check_vec <- function(label, base, calc, tol=1e-8) {
+  if (length(base) != length(calc)) {
+    stop(sprintf("%s: ベクトル長が不一致 base=%d calc=%d", label, length(base), length(calc)))
+  }
+  
+  delta <- calc - base
+  
+  # NA関連と数値不一致を区分
+  na_both      <- is.na(base) & is.na(calc)  # NA同士
+  na_mismatch  <- xor(is.na(base), is.na(calc))  # 片方だけNA
+  num_mismatch <- (!is.na(base) & !is.na(calc) & (abs(delta) > tol))
+  
+  bad_idx_all  <- which(na_mismatch | num_mismatch)    # ユーザー選択対象
+  bad_idx_na   <- which(na_both)                       # NA同士（警告のみ）
+  
+  if (length(bad_idx_all) == 0 && length(bad_idx_na) == 0) {
+    message(sprintf("%s：OK（tol=%.1e）", label, tol))
+    return(invisible(TRUE))
+  }
+  
+  L        <- length(base)
+  year_idx <- ((seq_len(L) - 1) %/% n_areas) + 1
+  area_idx <- ((seq_len(L) - 1) %%  n_areas) + 1
+  
+  # NA同士の警告
+  if (length(bad_idx_na) > 0) {
+    lines_na <- vapply(bad_idx_na, function(i) {
+      sprintf("%d年 / %s : 基準=NA, 再計算=NA",
+              years[year_idx[i]], NAMES_area[area_idx[i]])
+    }, character(1))
+    cat(
+      sprintf("%s：NA同士のデータを検出（tol=%.1e）。処理は続行します。\n", label, tol),
+      paste(lines_na, collapse = "\n"), "\n\n", sep = ""
+    )
+  }
+  
+  # 数値不一致または片方NAの処理
+  if (length(bad_idx_all) > 0) {
+    lines_all <- vapply(bad_idx_all, function(i) {
+      sprintf("%d年 / %s : 基準=%s, 再計算=%s, 差分=%s",
+              years[year_idx[i]], NAMES_area[area_idx[i]],
+              format(base[i], big.mark=",", scientific=FALSE, trim=TRUE),
+              format(calc[i], big.mark=",", scientific=FALSE, trim=TRUE),
+              format(delta[i], big.mark=",", scientific=FALSE, trim=TRUE))
+    }, character(1))
+    
+    cat(
+      sprintf("%s で不一致/片方NAを検出（tol=%.1e）。\n", label, tol),
+      paste(lines_all, collapse = "\n"), "\n\n", sep = ""
+    )
+    
+    ans <- utils::askYesNo(sprintf("%s の不一致を無視して処理を続行しますか？", label))
+    if (identical(ans, FALSE)) stop(sprintf("ユーザー選択により中断：%s", label))
+    message(sprintf("ユーザー選択により続行します（%s に不一致あり）。", label))
+    return(invisible(FALSE))
+  }
+  
+  invisible(TRUE)
+}
+
+
+# ⑤ 個別チェック（全年齢を網羅）
+check_vec("0–14歳（集計=5歳階級合算）", p0014, p0014_calc, tol)
+check_vec("15–64歳（集計=5歳階級合算）", p1564, p1564_calc, tol)
+check_vec("65歳以上（集計=5歳階級合算）", p6500, p6500_calc, tol)
+
+check_vec("65–74歳（集計=65–69+70–74）", p6574, p6574_calc, tol)
+check_vec("75歳以上（集計=75–79+…+95+）", p7500, p7500_calc, tol)
+
+check_vec("総人口（集計=全5歳階級の合算）", pTotal, pTotal_from_bins, tol)
+
+# ⑥ 既存の総人口（=0–14+15–64+65+）検証も（必要なら）
 pTotal_calc <- p0014 + p1564 + p6500
-# 不一致チェック＆停止
-mismatch_idx <- which(pTotal != pTotal_calc)
-if (length(mismatch_idx) > 0) {
-  years_bad <- years[mismatch_idx]
-  diffs     <- pTotal_calc[mismatch_idx] - pTotal[mismatch_idx]
-  # 年・差分をメッセージにまとめてエラーで停止
-  stop(
-    sprintf(
-      "総人口の整合性チェックに失敗しました。以下の年で差分があります：\n%s",
-      paste(
-        sprintf("%d年: 差分 %d", years_bad, diffs),
-        collapse = "\n")))}
-message("総人口の整合性チェック：OK")
+check_vec("総人口（集計=0–14+15–64+65+）", pTotal, pTotal_calc, tol)
+
 #----------------------------------------
 # 4. マトリクス化
 #----------------------------------------
@@ -168,7 +280,75 @@ mat_6500 <- matrix(p6500,  nrow = length(years), byrow = TRUE,
                    dimnames = list(year = as.character(years), area = NAMES_area))
 mat_TOT  <- matrix(pTotal, nrow = length(years), byrow = TRUE,
                    dimnames = list(year = as.character(years), area = NAMES_area))
-mat_ageing <- mat_6500 / mat_TOT * 100
+mat_6574 <- matrix(p6574, nrow = length(years), byrow = TRUE,
+                   dimnames = list(year = as.character(years), area = NAMES_area))
+mat_7500 <- matrix(p7500, nrow = length(years), byrow = TRUE,
+                   dimnames = list(year = as.character(years), area = NAMES_area))
+mat_ageing               <- mat_6500 / mat_TOT * 100
+mat_late_ageing          <- mat_7500 / mat_TOT * 100
+mat_dependency_ratio         <- (mat_0014 + mat_6500) / mat_1564 * 100
+mat_youth_dependency_ratio   <- mat_0014 / mat_1564 * 100
+mat_oldage_dependency_ratio  <- mat_6500 / mat_1564 * 100
+
+#----------------------------------------
+# 従属人口比率（mat_）の整合性チェック
+# 期待：mat_youth_dependency_ratio + mat_oldage_dependency_ratio == mat_dependency_ratio
+# 仕様：NA同士は警告のみで自動続行／片方NA or 数値不一致はユーザー選択
+#----------------------------------------
+tol <- 1e-8
+
+# 致命：行列次元不一致は続行不可
+if (!identical(dim(mat_youth_dependency_ratio), dim(mat_oldage_dependency_ratio)) ||
+    !identical(dim(mat_youth_dependency_ratio), dim(mat_dependency_ratio))) {
+  stop("従属人口比率行列の次元不一致：mat_* の行列サイズを確認してください。")
+}
+
+dep_sum <- mat_youth_dependency_ratio + mat_oldage_dependency_ratio
+delta   <- dep_sum - mat_dependency_ratio
+
+# マスク分類
+na_both      <- is.na(dep_sum) & is.na(mat_dependency_ratio)                # NA同士 → 警告のみ
+na_mismatch  <- xor(is.na(dep_sum), is.na(mat_dependency_ratio))            # 片方NA → 要選択
+num_mismatch <- (!is.na(dep_sum) & !is.na(mat_dependency_ratio) &
+                   (abs(delta) > tol))                                        # 数値不一致 → 要選択
+
+# 1) NA同士：警告のみで続行
+if (any(na_both)) {
+  na_rc <- which(na_both, arr.ind = TRUE)
+  lines_na <- apply(na_rc, 1, function(rc) {
+    r <- rc[1]; c <- rc[2]
+    sprintf("%d年 / %s : 年少+老年=NA, 総従属=NA", years[r], NAMES_area[c])
+  })
+  cat(
+    sprintf("従属人口比率：NA同士のデータを検出（tol=%.1e）。処理は続行します。\n", tol),
+    paste(lines_na, collapse = "\n"), "\n\n", sep = ""
+  )
+}
+
+# 2) 片方NA or 数値不一致：ユーザー選択
+bad_mask_all <- na_mismatch | num_mismatch
+if (any(bad_mask_all)) {
+  bad_rc <- which(bad_mask_all, arr.ind = TRUE)
+  lines <- apply(bad_rc, 1, function(rc) {
+    r <- rc[1]; c <- rc[2]
+    sprintf("%d年 / %s : 年少+老年=%s, 総従属=%s, 差分=%s",
+            years[r], NAMES_area[c],
+            ifelse(is.na(dep_sum[r,c]), "NA", sprintf("%.6f", dep_sum[r,c])),
+            ifelse(is.na(mat_dependency_ratio[r,c]), "NA", sprintf("%.6f", mat_dependency_ratio[r,c])),
+            ifelse(is.na(delta[r,c]), "NA", sprintf("%.6f", delta[r,c])))
+  })
+  cat(
+    sprintf("従属人口比率の整合性チェックで不一致/片方NAを検出（tol=%.1e）。\n", tol),
+    paste(lines, collapse = "\n"), "\n\n", sep = ""
+  )
+  ans <- utils::askYesNo("不一致を無視して処理を続行しますか？")
+  if (identical(ans, FALSE)) stop("ユーザー選択により処理を中断しました。")
+  message("ユーザー選択により続行します（従属人口比率チェックに不一致あり）。")
+} else {
+  message(sprintf("従属人口比率の整合性チェック：OK（tol=%.1e）", tol))
+}
+
+
 #----------------------------------------
 # 最新の高齢化率
 #----------------------------------------
