@@ -78,33 +78,42 @@ wb <- loadWorkbook(file_path)
 rawdata <- lapply(sheets, function(sh) {
   readWorkbook(wb, sheet = sh, colNames = FALSE)
 })
-
+# まず先頭に追加：地区名の正規化（空白全除去）
+norm_area <- function(x){
+  x <- as.character(x)
+  x <- trimws(x)
+  # 半角/全角スペース、NBSP、タブ等を全部削除
+  x <- gsub("[[:space:]\u00A0\u3000]+", "", x, perl = TRUE)
+  x
+}
 # ── 3) 最新のシートから動的に地区数＆地区名を取得 ────────────────
 last_data <- rawdata[[length(rawdata)]]
 
-# 45行ごとにある地区ヘッダー（列11）を抽出
-header_positions <- seq(1, nrow(last_data), by = 45)
+# 45行ごとにある地区ヘッダー（列11）を抽出（外側のカッコ等を落としてから正規化）
+header_positions  <- seq(1, nrow(last_data), by = 45)
 header_candidates <- as.character(last_data[header_positions, 11])
-header_cleaned <- str_sub(header_candidates, 2, -2)
+header_stripped   <- stringr::str_sub(header_candidates, 2, -2)
 
-# 実在する地区名だけに絞る（空白・NA除外）
-NAMES_area <- header_cleaned[!is.na(header_cleaned) & header_cleaned != ""]
-n_areas    <- length(NAMES_area)
+# 実在する地区名だけに絞り、無駄なスペースを排除
+NAMES_area_raw <- header_stripped[!is.na(header_stripped) & header_stripped != ""]
+NAMES_area     <- norm_area(NAMES_area_raw)
+n_areas        <- length(NAMES_area)
 
 # 全シート共通のヘッダー抽出行位置を再定義
 positions <- 1 + 45 * seq(0, n_areas - 1)
 
-# ── 4) 各シートのヘッダー行（列11）を抽出 ─────────
-headers_list <- lapply(rawdata, function(dat) {
-  str_sub(as.character(dat[positions, 11]), 2, -2)
+# ── 4) 各シートのヘッダー行（列11）を抽出（同じ正規化を適用） ─────────
+headers_list_raw <- lapply(rawdata, function(dat) {
+  stringr::str_sub(as.character(dat[positions, 11]), 2, -2)
 })
+headers_list <- lapply(headers_list_raw, norm_area)
 
-# ── 5) 最新シートを基準に、他シートのヘッダーと比較 ─────────
+# ── 5) 最新シートを基準に、他シートのヘッダーと比較（正規化済みで比較） ─────────
 base_header <- headers_list[[length(headers_list)]]
 mismatch    <- lapply(headers_list, function(hdr) which(hdr != base_header))
 bad_sheets  <- which(sapply(mismatch, length) > 0)
 
-# ── 6) 不一致があれば差分を表示して確認 ────────────────────
+# ── 6) 不一致があれば差分を表示（表示は正規化後の値） ────────────────────
 if (length(bad_sheets) > 0) {
   msg <- sapply(bad_sheets, function(i) {
     diffs <- mismatch[[i]]
@@ -121,11 +130,10 @@ if (length(bad_sheets) > 0) {
     sep = ""
   )
   ans <- utils::askYesNo("ヘッダー不一致を検知しました。処理を続行しますか？")
-  if (identical(ans, FALSE)) {
-    stop("処理を中断しました。")
-  }
+  if (identical(ans, FALSE)) stop("処理を中断しました。")
   message("ユーザー判断により処理を続行します。")
 }
+
 
 #----------------------------------------
 # 4. 通常データ読み込み（ヘッダー行を列名として）
@@ -266,6 +274,128 @@ check_vec("総人口（集計=全5歳階級の合算）", pTotal, pTotal_from_bi
 # ⑥ 既存の総人口（=0–14+15–64+65+）検証も（必要なら）
 pTotal_calc <- p0014 + p1564 + p6500
 check_vec("総人口（集計=0–14+15–64+65+）", pTotal, pTotal_calc, tol)
+
+
+# 不一致チェック（許容誤差つき）＆ユーザー選択で続行
+# 期待マップ（必要なら列番号やラベル文字列をあなたの実シートに合わせて調整）
+spec <- data.frame(
+  name   = c("p0004","p0509","p1014","p1519","p2024","p2529","p3034",
+             "p3539","p4044","p4549","p5054","p5559","p6064","p6569",
+             "p7074","p7579","p8084","p8589","p9094","p9500"),
+  row0   = c(2,8,14,20,26,32,38,  2,8,14,20,26,32,38,  2,8,14,20,26,32),
+  col    = c(rep(1,7),  # 0-4〜30-34
+             rep(5,7),  # 35-39〜65-69
+             rep(9,6)), # 70-74〜95以上
+  expect = c("0-4","5-9","10-14","15-19","20-24","25-29","30-34",
+             "35-39","40-44","45-49","50-54","55-59","60-64","65-69",
+             "70-74","75-79","80-84","85-89","90-94","95以上") # ←シートの表記に合わせる
+)
+
+
+label_col_name <- NULL  # 可能なら列名で指定（例: "age_label"）
+label_col      <- 1     # 数値指定しか無い場合はこれを使う
+block_h        <- 45
+
+# 置き換え版：空白・全角空白・NBSPを全部除去、ハイフン類も統一、全角数字→半角
+norm_label <- function(x){
+  x <- as.character(x)
+  
+  # 前後の空白トリム
+  x <- trimws(x)
+  
+  # 全角チルダ→半角（使ってないなら無害）
+  x <- gsub("〜", "~", x, fixed = TRUE)
+  
+  # 全ての空白を削除（通常空白・タブ・NBSP・全角空白を含む）
+  # [:space:] だけだと全角空白(U+3000)やNBSP(U+00A0)を逃す場合があるので明示指定
+  x <- gsub("[[:space:]\u00A0\u3000]+", "", x, perl = TRUE)
+  
+  # いろんな“横棒”を半角ハイフンに統一（− — – ‐ など）
+  x <- gsub("[−—–‐]", "-", x)
+  
+  # 全角数字→半角数字
+  x <- chartr("０１２３４５６７８９", "0123456789", x)
+  
+  # 最後に「--」のような重複を1本へ（念のため）
+  x <- gsub("-{2,}", "-", x)
+  
+  x
+}
+
+
+get_label_col <- function(dat){
+  if (!is.null(label_col_name)) {
+    if (!label_col_name %in% names(dat))
+      stop(sprintf("ラベル列 '%s' が見つかりません。", label_col_name))
+    return(as.character(dat[[label_col_name]]))
+  } else {
+    if (label_col < 1 || label_col > ncol(dat))
+      stop(sprintf("label_col=%d が列数の範囲外です（ncol=%d）。", label_col, ncol(dat)))
+    return(as.character(dat[[label_col]]))
+  }
+}
+
+check_labels <- function(sdata, spec, index_vec, years, NAMES_area) {
+  if (length(sdata) != length(years))
+    stop("sdata（シート数）と years（年数）の長さが一致しません。")
+  if (!all(index_vec %% 1 == 0))
+    stop("index_vec は整数ベクトルにしてください（0,1,2,...）。")
+  if (min(index_vec) != 0)
+    warning("index_vec は 0 始まりを推奨。ズレが疑われます。")
+  expect <- norm_label(spec$expect)
+  
+  bad_lines <- character()
+  
+  for (yidx in seq_along(sdata)) {
+    dat <- as.data.frame(sdata[[yidx]])
+    nrow_dat <- nrow(dat); ncol_dat <- ncol(dat)
+    
+    for (aidx in seq_along(index_vec)) {
+      base_row <- block_h * index_vec[aidx]
+      
+      # ★ここを「kごとに列を切り替える」ループにする
+      for (k in seq_len(nrow(spec))) {
+        rows <- spec$row0[k] + base_row
+        colk <- spec$col[k]
+        
+        # 範囲外チェック（行・列両方）
+        oob <- rows < 1 | rows > nrow_dat | colk < 1 | colk > ncol_dat
+        if (oob) {
+          msg <- sprintf("[範囲外] %s年 / %s : row=%d col=%d がシート範囲 (nrow=%d,ncol=%d) を外れています。",
+                         as.character(years[yidx]), NAMES_area[aidx],
+                         rows, colk, nrow_dat, ncol_dat)
+          bad_lines <- c(bad_lines, msg)
+          next
+        }
+        
+        actual <- norm_label(dat[rows, colk, drop = TRUE])
+        
+        if (is.na(actual) || actual != expect[k]) {
+          msg <- sprintf("[%s] %s年 / %s : 期待='%s', 実='%s' (row=%d,col=%d)",
+                         spec$name[k],
+                         as.character(years[yidx]),
+                         NAMES_area[aidx],
+                         expect[k], actual, rows, colk)
+          bad_lines <- c(bad_lines, msg)
+        }
+      }
+    }
+  }
+  
+  if (length(bad_lines)) {
+    cat("⚠ 年齢ラベル不一致／範囲外を検出：\n", paste(bad_lines, collapse = "\n"), "\n\n", sep = "")
+    ans <- utils::askYesNo("ラベル不一致を無視して続行しますか？")
+    if (isFALSE(ans)) stop("ユーザー選択により中断（年齢ラベル）。")
+    if (is.na(ans))  message("非対話環境のため既定で続行します（不一致あり）。")
+    message("ユーザー選択により続行します（年齢ラベル不一致あり）。")
+  } else {
+    message("年齢ラベル検証：OK")
+  }
+}
+
+# 実行
+check_labels(sdata, spec, index_vec, years, NAMES_area)
+
 
 #----------------------------------------
 # 4. マトリクス化
