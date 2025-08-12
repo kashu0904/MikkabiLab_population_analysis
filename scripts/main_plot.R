@@ -95,10 +95,18 @@ auto_rate_scale <- function(x, step = 5, pad = 1.10, min_limit = 0, max_limit = 
 plots <- plot_for_area("引佐地区")
 
 # 必要な図だけ print() してください
-# p1: 0〜4歳 / p2: 0〜14歳 / p3: 15〜64歳 / p4: 65歳以上 / p5: 総人口 / p6: 高齢化率推移
-print(plots$p1)
-print(plots$p2)
-print(plots$p3)
-print(plots$p4)
-print(plots$p5)
-print(plots$p6)
+
+print(plots$pop_00_04)       # 0〜4歳人口推移
+print(plots$pop_00_14)       # 0〜14歳人口推移
+print(plots$pop_15_64)       # 15〜64歳人口推移
+print(plots$pop_65_plus)     # 65歳以上人口推移
+print(plots$pop_age3_count)  # 年齢3区分総人口（人数）
+print(plots$pop_age3_share)  # 年齢3区分構成比（%）
+print(plots$pop_age20_count) # 年齢20区分総人口（人数）
+print(plots$pop_age20_share) # 年齢20区分構成比（%）
+print(plots$ratio_ageing)    # 高齢化率
+print(plots$ratio_late)      # 後期高齢化率
+print(plots$ratio_dep)       # 従属人口比率
+print(plots$ratio_dep_youth) # 年少人口従属比率
+print(plots$ratio_dep_old)   # 老年人口従属比率
+print(plots$ratio_all)       # 比率まとめ（オーバーレイ）

@@ -145,30 +145,30 @@ sdata <- lapply(sheets, function(sh) {
 ext <- function(dat, rows, col) {
   as.numeric(dat[rows, col][[1]])}
 
-p0004  <- unlist(lapply(sdata, ext, rows=  2  + 45 * index_vec, col = 2 )) #0~4歳人口
-p0509  <- unlist(lapply(sdata, ext, rows=  8  + 45 * index_vec, col = 2 )) #05~09歳人口
-p1014  <- unlist(lapply(sdata, ext, rows=  14 + 45 * index_vec, col = 2 )) #10~14歳人口
-p1519  <- unlist(lapply(sdata, ext, rows=  20 + 45 * index_vec, col = 2 )) #15~19歳人口
-p2024  <- unlist(lapply(sdata, ext, rows=  26 + 45 * index_vec, col = 2 )) #20~24歳人口
-p2529  <- unlist(lapply(sdata, ext, rows=  32 + 45 * index_vec, col = 2 )) #25~29歳人口
-p3034  <- unlist(lapply(sdata, ext, rows=  38 + 45 * index_vec, col = 2 )) #30~34歳人口
-p3539  <- unlist(lapply(sdata, ext, rows=  2  + 45 * index_vec, col = 6 )) #35~39歳人口
-p4044  <- unlist(lapply(sdata, ext, rows=  8  + 45 * index_vec, col = 6 )) #40~44歳人口
-p4549  <- unlist(lapply(sdata, ext, rows=  14 + 45 * index_vec, col = 6 )) #45~49歳人口
-p5054  <- unlist(lapply(sdata, ext, rows=  20 + 45 * index_vec, col = 6 )) #50~54歳人口
-p5559  <- unlist(lapply(sdata, ext, rows=  26 + 45 * index_vec, col = 6 )) #55~59歳人口
-p6064  <- unlist(lapply(sdata, ext, rows=  32 + 45 * index_vec, col = 6 )) #60~64歳人口
-p6569  <- unlist(lapply(sdata, ext, rows=  38 + 45 * index_vec, col = 6 )) #65~69歳人口
+p0004  <- unlist(lapply(sdata, ext, rows=  2  + 45 * index_vec, col = 2  )) #0 ~ 4歳人口
+p0509  <- unlist(lapply(sdata, ext, rows=  8  + 45 * index_vec, col = 2  )) #05~09歳人口
+p1014  <- unlist(lapply(sdata, ext, rows=  14 + 45 * index_vec, col = 2  )) #10~14歳人口
+p1519  <- unlist(lapply(sdata, ext, rows=  20 + 45 * index_vec, col = 2  )) #15~19歳人口
+p2024  <- unlist(lapply(sdata, ext, rows=  26 + 45 * index_vec, col = 2  )) #20~24歳人口
+p2529  <- unlist(lapply(sdata, ext, rows=  32 + 45 * index_vec, col = 2  )) #25~29歳人口
+p3034  <- unlist(lapply(sdata, ext, rows=  38 + 45 * index_vec, col = 2  )) #30~34歳人口
+p3539  <- unlist(lapply(sdata, ext, rows=  2  + 45 * index_vec, col = 6  )) #35~39歳人口
+p4044  <- unlist(lapply(sdata, ext, rows=  8  + 45 * index_vec, col = 6  )) #40~44歳人口
+p4549  <- unlist(lapply(sdata, ext, rows=  14 + 45 * index_vec, col = 6  )) #45~49歳人口
+p5054  <- unlist(lapply(sdata, ext, rows=  20 + 45 * index_vec, col = 6  )) #50~54歳人口
+p5559  <- unlist(lapply(sdata, ext, rows=  26 + 45 * index_vec, col = 6  )) #55~59歳人口
+p6064  <- unlist(lapply(sdata, ext, rows=  32 + 45 * index_vec, col = 6  )) #60~64歳人口
+p6569  <- unlist(lapply(sdata, ext, rows=  38 + 45 * index_vec, col = 6  )) #65~69歳人口
 p7074  <- unlist(lapply(sdata, ext, rows=  2  + 45 * index_vec, col = 10 )) #70~74歳人口
 p7579  <- unlist(lapply(sdata, ext, rows=  8  + 45 * index_vec, col = 10 )) #75~79歳人口
 p8084  <- unlist(lapply(sdata, ext, rows=  14 + 45 * index_vec, col = 10 )) #80~84歳人口
 p8589  <- unlist(lapply(sdata, ext, rows=  20 + 45 * index_vec, col = 10 )) #85~89歳人口
 p9094  <- unlist(lapply(sdata, ext, rows=  26 + 45 * index_vec, col = 10 )) #90~94歳人口
-p9500  <- unlist(lapply(sdata, ext, rows=  32 + 45 * index_vec, col = 10 )) #95~歳人口
+p9500  <- unlist(lapply(sdata, ext, rows=  32 + 45 * index_vec, col = 10 )) #95~  歳人口
 
-p0014  <- unlist(lapply(sdata, ext, rows = 44 + 45 * index_vec, col = 2 )) #0~14歳人口
-p1564  <- unlist(lapply(sdata, ext, rows = 44 + 45 * index_vec, col = 6 )) #15~64歳人口
-p6500  <- unlist(lapply(sdata, ext, rows = 44 + 45 * index_vec, col = 10)) #65~歳人口
+p0014  <- unlist(lapply(sdata, ext, rows = 44 + 45 * index_vec, col = 2  )) #0 ~14歳人口
+p1564  <- unlist(lapply(sdata, ext, rows = 44 + 45 * index_vec, col = 6  )) #15~64歳人口
+p6500  <- unlist(lapply(sdata, ext, rows = 44 + 45 * index_vec, col = 10 )) #65~  歳人口
 
 p6574  <- p6569+p7074 #65~74歳人口(前期高齢者)
 p7500  <- p6500-p6574 #75~  歳人口(後期高齢者)
@@ -414,11 +414,11 @@ mat_6574 <- matrix(p6574, nrow = length(years), byrow = TRUE,
                    dimnames = list(year = as.character(years), area = NAMES_area))
 mat_7500 <- matrix(p7500, nrow = length(years), byrow = TRUE,
                    dimnames = list(year = as.character(years), area = NAMES_area))
-mat_ageing               <- mat_6500 / mat_TOT * 100
-mat_late_ageing          <- mat_7500 / mat_TOT * 100
-mat_dependency_ratio         <- (mat_0014 + mat_6500) / mat_1564 * 100
-mat_youth_dependency_ratio   <- mat_0014 / mat_1564 * 100
-mat_oldage_dependency_ratio  <- mat_6500 / mat_1564 * 100
+mat_ageing               <- mat_6500 / mat_TOT * 100 #高齢化率
+mat_late_ageing          <- mat_7500 / mat_TOT * 100 #後期高齢化率
+mat_dependency_ratio         <- (mat_0014 + mat_6500) / mat_1564 * 100 #従属人口比率
+mat_youth_dependency_ratio   <- mat_0014 / mat_1564 * 100　　　　　　　#年少人口従属比率
+mat_oldage_dependency_ratio  <- mat_6500 / mat_1564 * 100　　　　　　　#老年人口従属比率
 
 #----------------------------------------
 # 従属人口比率（mat_）の整合性チェック
@@ -531,88 +531,353 @@ plot_for_area <- function(area_name){
   ) %>% mutate(
     total = age0004 + age0014 + age1564 + age65up,
     Arate = age65up / total * 100)
+  
   ##----------------------------------------
   ## 共通設定
   ##----------------------------------------
-  
-  # ❷数値指標用 auto_scale
   auto_scales <- list(
-    age0004 = auto_scale(df$age0004, n = 9), # 0~4歳
-    age0014 = auto_scale(df$age0014, n = 9), # 0~14歳（年少者）
-    age1564 = auto_scale(df$age1564, n = 9), # 15~64歳（労働生産年齢）
-    age65up = auto_scale(df$age65up, n = 9), # 65~歳（高齢者）
-    total   = auto_scale(df$total,   n = 9)) # 総人口
-  #`n=9`は目盛りの数（概ね9本程度）を指定。
-  # ❸高齢化率（Arate） 用 auto_rate_scale
+    age0004 = auto_scale(df$age0004, n = 9),
+    age0014 = auto_scale(df$age0014, n = 9),
+    age1564 = auto_scale(df$age1564, n = 9),
+    age65up = auto_scale(df$age65up, n = 9),
+    total   = auto_scale(df$total,   n = 9)
+  )
   rate_auto <- auto_rate_scale(df$Arate)
-  # カスタム設定取得
   cs <- custom_scales[[area_name]]
   if (is.null(cs)) cs <- list()
-  # auto と custom をマージ
   y_scales <- modifyList(auto_scales, cs)
-  # Arate は別途 override
-  if (!is.null(cs$Arate)) {y_scales$Arate <- cs$Arate
-  } else {y_scales$Arate <- rate_auto}
+  if (!is.null(cs$Arate)) {y_scales$Arate <- cs$Arate} else {y_scales$Arate <- rate_auto}
   
   # 1) 0〜4歳
-  p1 <- ggplot(df, aes(x = year, y = age0004)) +
+  pop_00_04 <- ggplot(df, aes(x = year, y = age0004)) +
     geom_bar(stat="identity", colour = 1, linewidth = linewidth_std, fill = "#90569C", width = width_std) +
     labs(title = paste0(area_name, "：0〜4歳の人口の推移 ",start_year,"〜",end_year,"（",base_area,"）"), y = "人口（人）") +
-    scale_x_discrete(expand = expand_x_std)+      
+    scale_x_discrete(expand = expand_x_std)+
     scale_y_continuous(breaks = y_scales$age0004$breaks, limits = y_scales$age0004$limits,labels = comma,expand = expand_y_std) +
     theme_std
+  
   # 2) 0〜14歳
-  p2 <- ggplot(df, aes(x = year, y = age0014)) +
+  pop_00_14 <- ggplot(df, aes(x = year, y = age0014)) +
     geom_bar(stat="identity", colour = 1, linewidth = linewidth_std, fill = "#6BC7F1", width = width_std) +
     labs(title = paste0(area_name, "：0〜14歳の人口の推移 ",start_year,"〜",end_year,"（",base_area,"）"), y = "人口（人）") +
     scale_x_discrete(expand = expand_x_std)+
     scale_y_continuous(breaks = y_scales$age0014$breaks, limits = y_scales$age0014$limits,labels = comma,expand = expand_y_std) +
     theme_std
+  
   # 3) 15〜64歳
-  p3 <- ggplot(df, aes(x = year, y = age1564)) +
+  pop_15_64 <- ggplot(df, aes(x = year, y = age1564)) +
     geom_bar(stat="identity", colour = 1, linewidth = linewidth_std, fill = "#00AD7A", width = width_std) +
     labs(title = paste0(area_name, "：15〜64歳の人口の推移 ",start_year,"〜",end_year,"（",base_area,"）"), y = "人口（人）") +
     scale_x_discrete(expand = expand_x_std)+
     scale_y_continuous(breaks = y_scales$age1564$breaks, limits = y_scales$age1564$limits,labels = comma,expand = expand_y_std) +
     theme_std
+  
   # 4) 65歳以上
-  p4 <- ggplot(df, aes(x = year, y = age65up)) +
+  pop_65_plus <- ggplot(df, aes(x = year, y = age65up)) +
     geom_bar(stat="identity", colour = 1, linewidth = linewidth_std, fill = "#006EBB", width = width_std) +
     labs(title = paste0(area_name, "：65歳以上の人口の推移 ",start_year,"〜",end_year,"（",base_area,"）"), y = "人口（人）") +
     scale_x_discrete(expand = expand_x_std)+
     scale_y_continuous(breaks = y_scales$age65up$breaks, limits = y_scales$age65up$limits,labels = comma,expand = expand_y_std) +
     theme_std
-  # 5) 総人口（積み上げ）
+  
+  # 5) 総人口（積み上げ：3区分）
   df_long <- df %>%
     select(year, age0014, age1564, age65up) %>%
     pivot_longer(-year, names_to = "group", values_to = "value") %>%
     mutate(group = factor(group,
                           levels = c("age0014","age1564","age65up"),
                           labels = c("0〜14歳","15〜64歳","65歳以上")))
-  p5 <- ggplot(df_long, aes(x = year, y = value, fill = group)) +
+  
+  pop_age3_count <- ggplot(df_long, aes(x = year, y = value, fill = group)) +
     geom_bar(stat="identity", colour = 1, linewidth = linewidth_std, width = width_std) +
     labs(title = paste0(area_name, "：総人口の推移 ",start_year,"〜",end_year,"（",base_area,"）"), y = "人口（人）") +
     scale_x_discrete(expand = expand_x_std)+
     scale_y_continuous(breaks = y_scales$total$breaks, limits = y_scales$total$limits,labels = comma,expand = expand_y_std) +
-    scale_fill_manual(values = c("#6BC7F1", "#00AD7A", "#006EBB")) + 
-    theme(legend.position = "none") +theme_std
-  # 6) 高齢化率
-  p6 <- ggplot(df, aes(x = year, y = Arate, group = 1)) +
-    geom_line(linewidth = 1.5, color = "#BB0000") +
-    # 高齢化率推移線の太さ
-    geom_point(size = 3, color = "#BB0000") +
-    # 高齢化率ポイントの大きさ
-    labs(title = paste0(area_name, "：高齢化率の推移 ",start_year,"〜",end_year,"（",base_area,"）"), y = "高齢化率（%）") +
-    scale_x_discrete(expand = expand_x_std)+
-    scale_y_continuous(breaks = y_scales$Arate$breaks, limits = y_scales$Arate$limits,expand = expand_y_std) +
+    scale_fill_manual(values = c("0〜14歳"="#6BC7F1", "15〜64歳"="#00AD7A", "65歳以上"="#006EBB")) +
+    theme(legend.position = "none") + theme_std
+  
+  # 3区分：構成比（100%）
+  pop_age3_share <- ggplot(df_long, aes(x = year, y = value, fill = group)) +
+    geom_bar(stat = "identity", position = "fill",
+             colour = 1, linewidth = linewidth_std, width = width_std) +
+    labs(title = paste0(area_name, "：年齢3区分の構成比推移 ", start_year, "〜", end_year, "（", base_area, "）"),
+         y = "構成比（%）", x = NULL) +
+    scale_x_discrete(expand = expand_x_std) +
+    scale_y_continuous(labels = scales::percent, expand = expand_y_std) +
+    scale_fill_manual(
+      values = c("0〜14歳"="#6BC7F1", "15〜64歳"="#00AD7A", "65歳以上"="#006EBB"),
+      breaks = c("0〜14歳","15〜64歳","65歳以上"),
+      labels = c("0〜14歳","15〜64歳","65歳以上"),
+      guide  = guide_legend(title = "年齢階級")
+    ) +
     theme_std
   
+  # ─────────────────────────────────────
+  # 年齢20区分（人数/構成比）
+  # ─────────────────────────────────────
+  pal20 <- c(
+    "#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2",
+    "#7f7f7f","#bcbd22","#17becf","#aec7e8","#ffbb78","#98df8a","#ff9896",
+    "#c5b0d5","#c49c94","#f7b6d2","#c7c7c7","#dbdb8d","#9edae5"
+  )
   
-  list(p1 = p1, p2 = p2, p3 = p3, p4 = p4, p5 = p5, p6 = p6)}
+  bins <- list(
+    p0004,p0509,p1014,p1519,p2024,p2529,p3034,
+    p3539,p4044,p4549,p5054,p5559,p6064,p6569,
+    p7074,p7579,p8084,p8589,p9094,p9500
+  )
+  
+  aidx <- match(area_name, NAMES_area)
+  if (is.na(aidx)) stop(sprintf("area_name '%s' が NAMES_area にありません。", area_name))
+  grab_area <- function(v){
+    mat <- matrix(v, nrow = length(years), byrow = TRUE)
+    as.numeric(mat[, aidx])
+  }
+  
+  df20 <- data.frame(
+    year   = factor(years, levels = years),
+    `0–4`  = grab_area(bins[[1]]),
+    `5–9`  = grab_area(bins[[2]]),
+    `10–14`= grab_area(bins[[3]]),
+    `15–19`= grab_area(bins[[4]]),
+    `20–24`= grab_area(bins[[5]]),
+    `25–29`= grab_area(bins[[6]]),
+    `30–34`= grab_area(bins[[7]]),
+    `35–39`= grab_area(bins[[8]]),
+    `40–44`= grab_area(bins[[9]]),
+    `45–49`= grab_area(bins[[10]]),
+    `50–54`= grab_area(bins[[11]]),
+    `55–59`= grab_area(bins[[12]]),
+    `60–64`= grab_area(bins[[13]]),
+    `65–69`= grab_area(bins[[14]]),
+    `70–74`= grab_area(bins[[15]]),
+    `75–79`= grab_area(bins[[16]]),
+    `80–84`= grab_area(bins[[17]]),
+    `85–89`= grab_area(bins[[18]]),
+    `90–94`= grab_area(bins[[19]]),
+    `95+`  = grab_area(bins[[20]])
+  )
+  
+  age_levels  <- names(df20)[-1]
+  disp_labels <- c("0〜4","5〜9","10〜14","15〜19","20〜24","25〜29","30〜34",
+                   "35〜39","40〜44","45〜49","50〜54","55〜59","60〜64","65〜69",
+                   "70〜74","75〜79","80〜84","85〜89","90〜94","95+")
+  pal20_named <- setNames(pal20, age_levels)
+  
+  df20_long <- tidyr::pivot_longer(df20, -year, names_to = "age_bin", values_to = "value")
+  df20_long$age_bin <- factor(df20_long$age_bin, levels = age_levels)
+  
+  total_by_year <- df20_long |>
+    dplyr::group_by(year) |>
+    dplyr::summarise(total = sum(value, na.rm = TRUE), .groups = "drop")
+  
+  pop_age20_count <- ggplot(df20_long, aes(x = year, y = value, fill = age_bin)) +
+    geom_bar(stat = "identity", colour = 1, linewidth = linewidth_std, width = width_std) +
+    labs(title = paste0(area_name, "：年齢20区分の総人口推移 ", start_year, "〜", end_year),
+         y = "人口（人）", x = NULL) +
+    scale_x_discrete(expand = expand_x_std) +
+    scale_y_continuous(labels = scales::comma,
+                       limits = c(0, max(total_by_year$total, na.rm = TRUE) * 1.05),
+                       expand = expand_y_std) +
+    scale_fill_manual(values = pal20_named, breaks = age_levels, labels = disp_labels,
+                      guide = guide_legend(ncol = 2, title = "年齢階級")) +
+    theme_std
+  
+  pop_age20_share <- ggplot(df20_long, aes(x = year, y = value, fill = age_bin)) +
+    geom_bar(stat = "identity", position = "fill", colour = 1, linewidth = linewidth_std, width = width_std) +
+    labs(title = paste0(area_name, "：年齢20区分の構成比推移 ", start_year, "〜", end_year),
+         y = "構成比（%）", x = NULL) +
+    scale_x_discrete(expand = expand_x_std) +
+    scale_y_continuous(labels = scales::percent, expand = expand_y_std) +
+    scale_fill_manual(values = pal20_named, breaks = age_levels, labels = disp_labels,
+                      guide = guide_legend(ncol = 2, title = "年齢階級")) +
+    theme_std
+  
+  if (any(is.na(df20_long$age_bin))) {
+    warning("age_bin に NA。列名と levels の不一致の可能性。levels=",
+            paste(age_levels, collapse = ", "))
+  }
+  
+  # ─────────────────────────────────────────────
+  # 6) 高齢化率 & 関連比率（個別コントロール対応）
+  # ─────────────────────────────────────────────
+  style_default <- list(
+    point_color   = "#000000",
+    point_fill    = "#000000",
+    point_shape   = 21,
+    point_size    = 3.0,
+    point_stroke  = 1.0,
+    line_color    = "#BB0000",
+    line_width    = 1.5,
+    alpha_points  = 1.0,
+    highlight_latest  = TRUE,
+    latest_size       = 5.0,
+    latest_shape      = 21,
+    latest_color      = "#BB0000",
+    latest_fill       = "#BB0000",
+    latest_stroke     = 0,
+    highlight_extrema = FALSE,
+    extrema_shape     = 24,
+    extrema_size      = 4.2,
+    max_color         = "#E86A10",
+    min_color         = "#006EBB",
+    label_mode        = "latest",
+    label_n_digits    = 1
+  )
+  style_ratio_ageing    <- style_default
+  style_ratio_late      <- style_default
+  style_ratio_dep       <- style_default
+  style_ratio_dep_youth <- style_default
+  style_ratio_dep_old   <- style_default
+  
+  yscale_opts_default <- list(step=5, pad=1.10, min_limit=0, max_limit=120)
+  yscale_opts <- list(
+    ageing    = yscale_opts_default,
+    late      = yscale_opts_default,
+    dep       = yscale_opts_default,
+    dep_youth = yscale_opts_default,
+    dep_old   = yscale_opts_default
+  )
+  
+  df <- df |>
+    dplyr::mutate(
+      LateArate = as.numeric(mat_late_ageing[, area_name]),
+      DepRatio  = as.numeric(mat_dependency_ratio[, area_name]),
+      YouthDep  = as.numeric(mat_youth_dependency_ratio[, area_name]),
+      OldDep    = as.numeric(mat_oldage_dependency_ratio[, area_name])
+    )
+  
+  build_rate_plot <- function(df, yvec, title, ylab, style, yscale_args) {
+    d <- df |> dplyr::mutate(y = {{ yvec }})
+    latest_year <- tail(years, 1)
+    d <- d |> dplyr::mutate(
+      is_latest = (as.character(year) == as.character(latest_year)),
+      is_max    = (y == max(y, na.rm = TRUE)),
+      is_min    = (y == min(y, na.rm = TRUE))
+    )
+    fmt_pct <- function(x) scales::number(x, accuracy = 1/10^style$label_n_digits, suffix = "%")
+    label_mask <- dplyr::case_when(
+      style$label_mode == "none"   ~ FALSE,
+      style$label_mode == "latest" ~ d$is_latest,
+      TRUE                         ~ TRUE
+    )
+    d_lab <- d[label_mask, , drop = FALSE]
+    d_lab$lab <- fmt_pct(d_lab$y)
+    
+    top <- auto_rate_scale(d$y,
+                           step = yscale_args$step,
+                           pad  = yscale_args$pad,
+                           min_limit = yscale_args$min_limit,
+                           max_limit = yscale_args$max_limit)
+    
+    ggplot(d, aes(x = year, y = y, group = 1)) +
+      geom_line(linewidth = style$line_width, color = style$line_color) +
+      geom_point(size=style$point_size, shape=style$point_shape, stroke=style$point_stroke,
+                 color=style$point_color, fill=style$point_fill, alpha=style$alpha_points) +
+      { if (style$highlight_latest) geom_point(
+        data  = subset(d, is_latest),
+        size  = style$latest_size,
+        shape = style$latest_shape,
+        stroke= style$latest_stroke,
+        color = style$latest_color,
+        fill  = style$latest_fill
+      ) else NULL } +
+      { if (style$highlight_extrema) list(
+        geom_point(data=subset(d, is_max), size=style$extrema_size, shape=24, stroke=.8,
+                   color=style$max_color, fill=style$max_color),
+        geom_point(data=subset(d, is_min), size=style$extrema_size, shape=25, stroke=.8,
+                   color=style$min_color, fill=style$min_color)
+      ) else NULL } +
+      { if (style$label_mode!="none") geom_text(data=d_lab, aes(label=lab), vjust=-0.6, size=3.5) else NULL } +
+      labs(title = title, y = ylab, x = NULL) +
+      scale_x_discrete(expand = expand_x_std) +
+      scale_y_continuous(breaks = top$breaks, limits = top$limits, expand = expand_y_std) +
+      theme_std
+  }
+  
+  ratio_ageing <- build_rate_plot(
+    df, Arate,
+    paste0(area_name, "：高齢化率の推移 ", start_year, "〜", end_year, "（", base_area, "）"),
+    "高齢化率（%）", style_ratio_ageing, yscale_opts$ageing
+  )
+  ratio_late <- build_rate_plot(
+    df, LateArate,
+    paste0(area_name, "：後期高齢化率（75歳以上/総人口）", start_year, "〜", end_year, "（", base_area, "）"),
+    "後期高齢化率（%）", style_ratio_late, yscale_opts$late
+  )
+  ratio_dep <- build_rate_plot(
+    df, DepRatio,
+    paste0(area_name, "：従属人口比率（年少+老年）/生産年齢 ", start_year, "〜", end_year, "（", base_area, "）"),
+    "従属人口比率（%）", style_ratio_dep, yscale_opts$dep
+  )
+  ratio_dep_youth <- build_rate_plot(
+    df, YouthDep,
+    paste0(area_name, "：年少人口従属比率（0〜14歳/15〜64歳）", start_year, "〜", end_year, "（", base_area, "）"),
+    "年少人口従属比率（%）", style_ratio_dep_youth, yscale_opts$dep_youth
+  )
+  ratio_dep_old <- build_rate_plot(
+    df, OldDep,
+    paste0(area_name, "：老年人口従属比率（65歳以上/15〜64歳）", start_year, "〜", end_year, "（", base_area, "）"),
+    "老年人口従属比率（%）", style_ratio_dep_old, yscale_opts$dep_old
+  )
+  
+  col_ageing <- "#BB0000"; col_late <- "#7E3AF2"; col_dep <- "#333333"; col_ydep <- "#2CA02C"; col_odep <- "#006EBB"
+  
+  df_rates_long <- df |>
+    dplyr::select(
+      year,
+      `高齢化率` = Arate,
+      `後期高齢化率` = LateArate,
+      `従属人口比率` = DepRatio,
+      `年少人口従属比率` = YouthDep,
+      `老年人口従属比率` = OldDep
+    ) |>
+    tidyr::pivot_longer(-year, names_to = "metric", values_to = "value")
+  
+  all_rate_scale <- auto_rate_scale(df_rates_long$value, step = 5, pad = 1.10, min_limit = 0, max_limit = 120)
+  
+  ratio_all <- ggplot(df_rates_long, aes(x = year, y = value, color = metric, group = metric)) +
+    geom_line(linewidth = 1.3) +
+    geom_point(size = 2.6) +
+    scale_color_manual(
+      values = c(
+        "高齢化率" = col_ageing,
+        "後期高齢化率" = col_late,
+        "従属人口比率" = col_dep,
+        "年少人口従属比率" = col_ydep,
+        "老年人口従属比率" = col_odep
+      )
+    ) +
+    labs(
+      title = paste0(area_name, "：主要人口比率の推移（まとめ） ", start_year, "〜", end_year, "（", base_area, "）"),
+      y = "比率（%）", x = NULL, color = "指標"
+    ) +
+    scale_x_discrete(expand = expand_x_std) +
+    scale_y_continuous(breaks = all_rate_scale$breaks, limits = all_rate_scale$limits, expand = expand_y_std) +
+    theme_std
+  
+  # 返り値（意味のあるキー名）
+  list(
+    pop_00_04       = pop_00_04,        # 0〜4歳人口推移
+    pop_00_14       = pop_00_14,        # 0〜14歳人口推移
+    pop_15_64       = pop_15_64,        # 15〜64歳人口推移
+    pop_65_plus     = pop_65_plus,      # 65歳以上人口推移
+    pop_age3_count  = pop_age3_count,   # 年齢3区分総人口（人数）
+    pop_age3_share  = pop_age3_share,   # 年齢3区分構成比（%）
+    pop_age20_count = pop_age20_count,  # 年齢20区分総人口（人数）
+    pop_age20_share = pop_age20_share,  # 年齢20区分構成比（%）
+    ratio_ageing    = ratio_ageing,     # 高齢化率
+    ratio_late      = ratio_late,       # 後期高齢化率
+    ratio_dep       = ratio_dep,        # 従属人口比率
+    ratio_dep_youth = ratio_dep_youth,  # 年少人口従属比率
+    ratio_dep_old   = ratio_dep_old,    # 老年人口従属比率
+    ratio_all       = ratio_all         # 比率まとめ（オーバーレイ）
+  )
+}
 
 
 
-
+#以下は最新年で各地区のデータを比べる。同じ図表に落とす。
 # ③ 年の数
 analysis_period <- length(years)
 latest_Arate = mat_ageing[analysis_period, ]
@@ -640,18 +905,24 @@ area_levels <- df_ordered$area
 df$area <- factor(df$area, levels = area_levels)
 
 
-p7 <- ggplot(df, aes(x = area, y = Arate, fill = fill_color)) + 
-  geom_bar(stat = "identity", colour = 1, linewidth = linewidth_std, width = width_std_latest) +
-  labs(title = paste0("各町字の高齢化率 ", end_year, "（", base_area, "）"),
-       y = "高齢化率（%）") +
-  scale_x_discrete(expand = expand_x_std_latest) +
-  scale_fill_identity() +
-  scale_y_continuous(
-    breaks = latest_arate_breaks,
-    limits = latest_arate_limits,
-    labels = comma,
-    expand = expand_y_std_latest
-  ) +
-  theme_std +
-  theme(axis.text.x = element_text(size = latest_area_label_size))
+latest_arate_plot <- function() {
+  # （ここに現在 p7 を作っている前処理〜ggplot本体までをそのまま移す）
+  # 例：analysis_period, latest_Arate, df 作成、並び順決定、ggplot(...) など
+  p7 <- ggplot(df, aes(x = area, y = Arate, fill = fill_color)) +
+    geom_bar(stat = "identity", colour = 1, linewidth = linewidth_std, width = width_std_latest) +
+    labs(title = paste0("各町字の高齢化率 ", end_year, "（", base_area, "）"),
+         y = "高齢化率（%）") +
+    scale_x_discrete(expand = expand_x_std_latest) +
+    scale_fill_identity() +
+    scale_y_continuous(
+      breaks = latest_arate_breaks,
+      limits = latest_arate_limits,
+      labels = scales::comma,
+      expand = expand_y_std_latest
+    ) +
+    theme_std +
+    theme(axis.text.x = element_text(size = latest_area_label_size))
+  
+  return(p7)
+}
 
