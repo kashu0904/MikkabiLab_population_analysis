@@ -834,7 +834,7 @@ plot_for_area <- function(area_name){
     ) |>
     tidyr::pivot_longer(-year, names_to = "metric", values_to = "value")
   
-  all_rate_scale <- auto_rate_scale(df_rates_long$value, step = 5, pad = 1.10, min_limit = 0, max_limit = 120)
+  all_rate_scale <- auto_rate_scale(df_rates_long$value, step = 5, pad = 1.10, min_limit = 0, max_limit = 100)
   
   ratio_all <- ggplot(df_rates_long, aes(x = year, y = value, color = metric, group = metric)) +
     geom_line(linewidth = 1.3) +

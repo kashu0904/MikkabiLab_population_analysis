@@ -21,7 +21,7 @@ source(here::here("lib", "plot_population_by_area_common.R"), encoding = "UTF-8"
 
 # ③ 描画したい地区（町字）を選ぶ
 #    ※ 一覧は plot_population_by_area_common.R 内で読み込まれる NAMES_area を参照
-target_area <- "引佐町四方浄"
+target_area <- "引佐地区"
 
 # ----------------------------------------------------------------------
 # 詳細設定（任意）— 最新年の比較図の見た目（ユーザー要望のまとめ）
